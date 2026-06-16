@@ -4,3 +4,4 @@
 # to update pip 
 # python.exe -m pip install --upgrade pip
 # python -m specifies which interpreter to use
+# py -3.11 -m venv my_env
