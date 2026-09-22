@@ -1,24 +1,32 @@
 from langchain_huggingface import ChatHuggingFace, HuggingFaceEndpoint
 from dotenv import load_dotenv
 from typing import TypedDict
+from langchain_groq import ChatGroq
 from langchain_core.prompts import PromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 from huggingface_hub import InferenceClient
+import os
 
 # from ChatModels.chatmodel_huggingface_api import LLM
 
 load_dotenv()
-client = InferenceClient(
-    model= "Qwen/Qwen2.5-7B-Instruct"
+# client = InferenceClient(
+#     model= "Qwen/Qwen2.5-7B-Instruct"
+#     )
+# print(client)
+
+llm  = ChatGroq(
+        temperature=0.01,
+        model = "openai/gpt-oss-safeguard-20b",
+        api_key=os.environ.get("GROQ_API_KEY")
     )
-print(client)
 
-LLM = HuggingFaceEndpoint(
-    repo_id="Qwen/Qwen2.5-7B-Instruct",
-    task="text-generation"
-)
+# LLM = HuggingFaceEndpoint(
+#     repo_id="Qwen/Qwen2.5-7B-Instruct",
+#     task="text-generation"
+# )
 
-model = ChatHuggingFace(llm = LLM)
+# model = ChatHuggingFace(llm = llm)
 
 # 1st prompt -> detailed report
 template1 = PromptTemplate(
@@ -38,7 +46,7 @@ template2 = PromptTemplate(
 # result2 = model.invoke(prompt2)
 
 parser = StrOutputParser()
-chain = template1 | model | parser | template2 | model | parser
+chain = template1 | llm | parser | template2 | llm | parser
 
 result = chain.invoke({'topic':'Black hole'})
 print(result)
